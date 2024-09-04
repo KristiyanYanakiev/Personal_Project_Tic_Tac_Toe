@@ -1,5 +1,8 @@
 from collections import deque
 
+from player_one import PlayerOne
+from player_two import PlayerTwo
+
 
 class TicTacToe:
     SIZE_OF_BOARD = 3
@@ -133,3 +136,41 @@ class TicTacToe:
     @staticmethod
     def print_draw_message():
         print("Draw!")
+
+    def play_game(self):
+        while True:
+            position = input(f"{self.current_player}, please select position: ")
+            try:
+                position = int(position)
+            except ValueError:
+                print(f"Dear {self.current_player}, you need to enter a number between 1 and {self.SIZE_OF_BOARD}")
+                continue
+
+            row, col = self.take_row_and_col_from_position(position)
+            if self.check_position_valid_index(row, col):
+                self.place_symbol(position)
+                if self.check_win() or self.check_for_draw():
+                    break
+                self.players.rotate()
+            else:
+                print(
+                    f"Dear {self.current_player}, please enter valid position between 1 and {self.SIZE_OF_BOARD ** 2}")
+                continue
+
+        if self.check_for_draw():
+            self.print_draw_message()
+
+        if self.check_win():
+            self.print_win_message()
+
+
+if __name__ == "__main__":
+    first_player_name = input("Dear Player One, please enter your name: ")
+    second_player_name = input("Dear Player Two, please enter your name: ")
+
+    player_one = PlayerOne(first_player_name)
+    player_two = PlayerTwo(second_player_name)
+    game = TicTacToe()
+    game.players.extend([player_one, player_two])
+    game.start_game()
+    game.play_game()
